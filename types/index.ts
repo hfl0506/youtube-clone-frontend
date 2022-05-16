@@ -3,8 +3,25 @@ export enum QueryKeys {
   videos = "videos",
 }
 
+export enum MIME_TYPES {
+  mp4 = "video/mp4",
+}
+
 export interface Me {
   _id: string;
   email: string;
   username: string;
+}
+
+export interface Video {
+  _id: string;
+  owner: string;
+  published: boolean;
+  videoId: string;
+  createdAt: Date;
+  updatedAt: Date;
+  __v: number;
+  extension: string;
+  description: string;
+  title: string;
 }

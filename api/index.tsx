@@ -1,10 +1,13 @@
 import axios from "axios";
+import { Video } from "../types";
 
 const base = process.env.NEXT_PUBLIC_API_ENDPOINT;
 
 const userBase = `${base}/api/users`;
 
 const authBase = `${base}/api/auth`;
+
+const videoBase = `${base}/api/videos`;
 
 export async function registerUser(payload: {
   username: string;
@@ -18,9 +21,9 @@ export async function registerUser(payload: {
     .catch((err) => console.log(err));
 }
 
-export async function login(payload: { email: string; password: string }) {
+export function login(payload: { email: string; password: string }) {
   const url = `${authBase}/login`;
-  return await axios
+  return axios
     .post(url, payload, {
       withCredentials: true,
     })
@@ -28,7 +31,7 @@ export async function login(payload: { email: string; password: string }) {
     .catch((err) => console.log(err));
 }
 
-export async function getMe() {
+export function getMe() {
   return axios
     .get(userBase, {
       withCredentials: true,
@@ -37,4 +40,46 @@ export async function getMe() {
     .catch(() => {
       return null;
     });
+}
+
+export function uploadVideo({
+  formData,
+  config,
+}: {
+  formData: FormData;
+  config: {
+    onUploadProgress: (progressEvent: any) => void;
+  };
+}) {
+  return axios
+    .post(videoBase, formData, {
+      withCredentials: true,
+      ...config,
+      headers: {
+        "Content-type": "multipart/form-data",
+      },
+    })
+    .then((res) => res.data)
+    .catch((err) => console.log(err));
+}
+
+export function editVideo({
+  videoId,
+  ...payload
+}: {
+  videoId: string;
+  title: string;
+  description: string;
+  published: boolean;
+}) {
+  return axios
+    .patch(`${videoBase}/${videoId}`, payload, {
+      withCredentials: true,
+    })
+    .then((res) => res.data)
+    .catch((err) => console.log(err));
+}
+
+export function getVideos() {
+  return axios.get(videoBase).then((res) => res.data);
 }
